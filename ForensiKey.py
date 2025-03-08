@@ -62,7 +62,7 @@ def save_to_tar(input_file="keywords.txt", tar_filename="keywords.tar.gz"):
 
 def main():
     # 1. Specify the memory dump file
-    dump_file = "memory_dump.raw"  # Change this to the path of your memory dump file
+    dump_file = input("Path to memory file:)  # Change this to the path of your memory dump file
     
     # 2. Extract printable strings from the memory dump
     extracted_strings = extract_strings(dump_file)
