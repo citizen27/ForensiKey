@@ -1,8 +1,6 @@
 import os
-import csv
 import zipfile
 import tarfile
-from collections import Counter
 
 def extract_strings(file_path, min_length=4):
     """
@@ -10,9 +8,14 @@ def extract_strings(file_path, min_length=4):
     Strings must be at least 'min_length' characters long.
     """
     strings = []
-    with open(file_path, 'rb') as f:
-        data = f.read()
-
+    try:
+        with open(file_path, 'rb') as f:
+            data = f.read()
+            print(f"Read {len(data)} bytes from {file_path}.")
+    except Exception as e:
+        print(f"Error reading the file: {e}")
+        return []
+    
     # Look for printable ASCII characters (from space (32) to ~ (126))
     current_string = []
     for byte in data:
@@ -23,29 +26,14 @@ def extract_strings(file_path, min_length=4):
                 strings.append(''.join(current_string))
             current_string = []
     
+    print(f"Extracted {len(strings)} strings.")
     return strings
 
-def calculate_frequencies(keywords):
-    """
-    Calculate the frequency of each keyword in the list.
-    Returns a dictionary of keyword frequencies.
-    """
-    return dict(Counter(keywords))
-
-def save_to_txt(keyword_freq, filename="keywords.txt"):
-    """Save keyword frequency data to a text file."""
+def save_to_txt(keywords, filename="keywords.txt"):
+    """Save the extracted keywords to a text file."""
     with open(filename, 'w') as f:
-        for keyword, freq in keyword_freq.items():
+        for keyword in keywords:
             f.write(f"{keyword}\n")
-    print(f"Saved to {filename}")
-
-def save_to_csv(keyword_freq, filename="keywords.csv"):
-    """Save keyword frequency data to a CSV file."""
-    with open(filename, 'w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(["Keyword", "Frequency"])  # Column headers
-        for keyword, freq in keyword_freq.items():
-            writer.writerow([keyword, freq])
     print(f"Saved to {filename}")
 
 def save_to_zip(input_file="keywords.txt", zip_filename="keywords.zip"):
@@ -61,26 +49,26 @@ def save_to_tar(input_file="keywords.txt", tar_filename="keywords.tar.gz"):
     print(f"Saved to {tar_filename}")
 
 def main():
-    # 1. Specify the memory dump file
-    dump_file = input("Path to memory file:")  # Change this to the path of your memory dump file
+    # Ask the user for the memory dump file path
+    dump_file = input("Path to memory file: ")
+
+    if not os.path.exists(dump_file):
+        print(f"Error: The file {dump_file} does not exist.")
+        return
     
-    # 2. Extract printable strings from the memory dump
+    # 1. Extract printable strings from the memory dump
+    print("Extracting strings from the memory dump...")
     extracted_strings = extract_strings(dump_file)
-    print(f"Extracted {len(extracted_strings)} strings from the dump.")
+    if not extracted_strings:
+        print("No strings were extracted from the memory dump.")
+        return
     
-    # 3. Filter the extracted strings (you can customize this part)
+    # 2. Filter the extracted strings (you can customize this part)
     keywords = [keyword for keyword in extracted_strings if len(keyword) > 3]  # Example filter
-
-    # 4. Calculate the frequency of each keyword
-    keyword_freq = calculate_frequencies(keywords)
-    print(f"Found {len(keyword_freq)} unique keywords.")
-
-    # 5. Choose the output format and save results
-    # Save as .txt file
-    save_to_txt(keyword_freq)
-
-    # Save as .csv file
-    save_to_csv(keyword_freq)
+    print(f"Filtered down to {len(keywords)} keywords.")
+    
+    # 3. Save the results
+    save_to_txt(keywords)
 
     # Optionally, save to compressed formats (.zip, .tar.gz)
     save_to_zip("keywords.txt")
