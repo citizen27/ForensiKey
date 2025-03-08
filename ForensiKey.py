@@ -42,12 +42,6 @@ def save_to_zip(input_file="keywords.txt", zip_filename="keywords.zip"):
         zipf.write(input_file)
     print(f"Saved to {zip_filename}")
 
-def save_to_tar(input_file="keywords.txt", tar_filename="keywords.tar.gz"):
-    """Save a file to a tar.gz archive."""
-    with tarfile.open(tar_filename, "w:gz") as tar:
-        tar.add(input_file)
-    print(f"Saved to {tar_filename}")
-
 def main():
     # Ask the user for the memory dump file path
     dump_file = input("Path to memory file: ")
@@ -63,16 +57,11 @@ def main():
         print("No strings were extracted from the memory dump.")
         return
     
-    # 2. Filter the extracted strings (you can customize this part)
-    keywords = [keyword for keyword in extracted_strings if len(keyword) > 3]  # Example filter
-    print(f"Filtered down to {len(keywords)} keywords.")
-    
-    # 3. Save the results
+    # 2. Save the results
     save_to_txt(keywords)
 
-    # Optionally, save to compressed formats (.zip, .tar.gz)
+    # 3. Save to compressed formats (.zip, .tar.gz)
     save_to_zip("keywords.txt")
-    save_to_tar("keywords.txt")
 
 if __name__ == "__main__":
     main()
