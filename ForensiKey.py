@@ -56,6 +56,9 @@ def main():
     if not extracted_strings:
         print("No strings were extracted from the memory dump.")
         return
+        
+    keywords = [keyword for keyword in extracted_strings if len(keyword) > 3]  # Example filter
+    print(f"Filtered down to {len(keywords)} keywords.")
     
     # 2. Save the results
     save_to_txt(keywords)
