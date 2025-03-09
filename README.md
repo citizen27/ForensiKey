@@ -1,5 +1,7 @@
 # ForensiKey
 
+README made with ChatGPT.
+
 This script extracts readable ASCII strings from a memory dump file and saves the results in both text and compressed formats.
 
 ## Features
